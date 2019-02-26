@@ -64,46 +64,46 @@ MemoryGame = function(gs) {
     this.onClick = function(cardId){
         
         if (cardId >= 0 && cardId != null && cardId <= 15){
-        if (this.numparejas == 8) {
-            this.mensaje = "Refresh to continue";
-        }
-        else{
-            if (this.numCartas == 0){
-                this.cartas[cardId].flip(); // Da la vuelta a la carta
-                this.cartalevantada = cardId; // guarda su identificador
-                this.numCartas++; // Indica que hay una carta levantada
+            if (this.numparejas == 8) {
+                this.mensaje = "Refresh to continue";
             }
-            else if (this.numCartas == 1){
-                if (this.cartas[cardId].getestado() == 0){
-                    //this.cartas[cardId].flip(); // Da la vuelta a la carta
-                    if (this.cartas[cardId].compareTo(this.cartas[this.cartalevantada].getId())){ // Compara los sprites
-                        this.cartas[cardId].found();
-                        this.cartas[this.cartalevantada].found();
-                        ++this.numparejas;
-                        this.mensaje = "Match Found!";
-                        this.numCartas = 0;
-                        if (this.numparejas == 8) this.mensaje = "You Win!";
-                    }
-                    else{
-                        this.mensaje = "Try Again";
-                        this.cartas[cardId].flip();
-                        
-                        // hacemos una copia de la primera carta levantada y de la clase 
-                        var primeraCarta = this.cartalevantada
-                        var that = this;
-                        ++this.numCartas;
-                        
-                        // programamos que se den la vuelta en 1 segundo
-                        setTimeout(function(){
-                            that.cartas[primeraCarta].flip();
-                            that.cartas[cardId].flip();
-                            that.numCartas=0;},1000);
-                    }
+            else{
+                if (this.numCartas == 0){
+                    this.cartas[cardId].flip(); // Da la vuelta a la carta
+                    this.cartalevantada = cardId; // guarda su identificador
+                    this.numCartas++; // Indica que hay una carta levantada
                 }
-                this.cartalevantada = null;
+                else if (this.numCartas == 1){
+                    if (this.cartas[cardId].getestado() == 0){
+                        //this.cartas[cardId].flip(); // Da la vuelta a la carta
+                        if (this.cartas[cardId].compareTo(this.cartas[this.cartalevantada].getId())){ // Compara los sprites
+                            this.cartas[cardId].found();
+                            this.cartas[this.cartalevantada].found();
+                            ++this.numparejas;
+                            this.mensaje = "Match Found!";
+                            this.numCartas = 0;
+                            if (this.numparejas == 8) this.mensaje = "You Win!";
+                        }
+                        else{
+                            this.mensaje = "Try Again";
+                            this.cartas[cardId].flip();
+                            
+                            // hacemos una copia de la primera carta levantada y de la clase 
+                            var primeraCarta = this.cartalevantada
+                            var that = this;
+                            ++this.numCartas;
+                            
+                            // programamos que se den la vuelta en 1 segundo
+                            setTimeout(function(){
+                                that.cartas[primeraCarta].flip();
+                                that.cartas[cardId].flip();
+                                that.numCartas=0;},1000);
+                        }
+                    }
+                    this.cartalevantada = null;
+                }
             }
         }
-    }
 
     }
 
