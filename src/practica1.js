@@ -67,6 +67,7 @@ MemoryGame = function(gs) {
 
         while(continua){
             this.cartas[cardId].flip();
+            this.cartas[cardId].found();
         }
 
     }
