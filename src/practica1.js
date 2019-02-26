@@ -69,9 +69,11 @@ MemoryGame = function(gs) {
             }
             else{
                 if (this.numCartas == 0){
-                    this.cartas[cardId].flip(); // Da la vuelta a la carta
-                    this.cartalevantada = cardId; // guarda su identificador
-                    this.numCartas++; // Indica que hay una carta levantada
+                    if (this.cartas[cardId].getestado() == 0){
+                        this.cartas[cardId].flip(); // Da la vuelta a la carta
+                        this.cartalevantada = cardId; // guarda su identificador
+                        this.numCartas++; // Indica que hay una carta levantada
+                    }
                 }
                 else if (this.numCartas == 1){
                     if (this.cartas[cardId].getestado() == 0){
@@ -99,8 +101,8 @@ MemoryGame = function(gs) {
                                 that.cartas[cardId].flip();
                                 that.numCartas=0;},1000);
                         }
+                        this.cartalevantada = null;
                     }
-                    this.cartalevantada = null;
                 }
             }
         }
