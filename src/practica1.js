@@ -10,9 +10,10 @@ var MemoryGame = MemoryGame || {};
  */
 MemoryGame = function(gs) {
     this.gs = gs;
+    this.mensaje = "Memory Game";
     this.cartas = new Array(16);
-    this.cartaActual = null;
-    this.continua = false;
+    this.cartalevantada = null; // carta que acabamos de levantar en caso de no haber ninguna levantada o la que ya estaba levantada al levantar la actual
+    this.numCartas = 0;;
     this.numparejas = 0;
 
     //inicializa el juego creando las cartas, las desordena y comieza el bucle del juego
@@ -45,7 +46,7 @@ MemoryGame = function(gs) {
 
     // escribe el mensaje con el estado actual, pide a las cartas que se dibujen
     this.draw = function(){
-        //this.gs.drawMessage("Mensajeeeeeeeeeeeeeeeeeee"); ///////////////////////////////
+        this.gs.drawMessage(this.mensaje);
         for (var i = 0; i < 16; i++){
             this.cartas[i].draw(this.gs, i);
         }
@@ -59,15 +60,43 @@ MemoryGame = function(gs) {
     // Se le llama cada vez que se pulsa en el tablero, se encarga de dar la vuelta a la carta y si hay dos boca arriba 
     // comprobar si son la misma, en caso de no serlo hay que girarlas otra vez
     this.onClick = function(cardId){
-        // Funciones que tenemos:
-        // this.draw = function(tile, boardPos) -- dibuja una carta
-        // this.resolveCard = function(x,y) -- convierte una posición del canvas en la de una carta
-        // this.drawMessage = function(message) -- escribe un mensaje
-        // var InputServer = function() -- llama a este metodo.
+        
+        if (this.numparejas == 8) {
+            this.mensaje = "Refresh to continue";
+        }
+        else{
+            if (this.numCartas == 0){
+                this.cartas[cardId].flip(); // Da la vuelta a la carta
+                this.cartalevantada = cardId; // guarda su identificador
+                this.numCartas++; // Indica que hay una carta levantada
+            }
+            else if (this.numCartas == 1){
+                if (this.cartas[cardId].getestado() == 0){
+                    //this.cartas[cardId].flip(); // Da la vuelta a la carta
+                    if (this.cartas[cardId].compareTo(this.cartas[this.cartalevantada].getId())){ // Compara los sprites
+                        this.cartas[cardId].found();
+                        this.cartas[this.cartalevantada].found();
+                        ++this.numparejas;
+                        this.mensaje = "Match Found!";
+                        this.numCartas = 0;
+                        if (this.numparejas == 8) this.mensaje = "You Win!";
+                    }
+                    else{
+                        this.mensaje = "Try Again";
+                        this.cartas[cardId].flip();
 
-        while(continua){
-            this.cartas[cardId].flip();
-            this.cartas[cardId].found();
+                        var primeraCarta = this.cartalevantada
+                        var that = this;
+                        ++this.numCartas;
+
+                        setTimeout(function(){
+                            that.cartas[primeraCarta].flip();
+                            that.cartas[cardId].flip();
+                            that.numCartas=0;},900);
+                    }
+                }
+                this.cartalevantada = null;
+            }
         }
 
     }
@@ -88,7 +117,7 @@ MemoryGameCard = function(sprite) {
     this.estadoencontrada = 0;
 
     this.flip = function(){
-        if (this.estadoarriba) this.estadoarriba = 0;
+        if (this.estadoarriba == 1) this.estadoarriba = 0;
         else this.estadoarriba = 1;
     }
 
@@ -104,6 +133,14 @@ MemoryGameCard = function(sprite) {
     this.draw = function(gs, pos){
         if (this.estadoarriba) gs.draw(this.sprite,pos);
         else gs.draw("back", pos);
+    }
+
+    this.getestado = function(){
+        return this.estadoarriba;
+    }
+
+    this.getId = function(){
+        return this.sprite;
     }
 
 };
