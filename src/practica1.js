@@ -54,7 +54,7 @@ MemoryGame = function(gs) {
         }
     }
 
-    //llama a draw cada 16ms
+    //llama a draw cada 16ms, equivale a setInterval(function(){this.draw();},16)
     this.loop = function(){
        setInterval(this.draw.bind(this),16);
     }
