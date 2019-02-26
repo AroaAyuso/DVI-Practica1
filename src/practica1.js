@@ -13,8 +13,8 @@ MemoryGame = function(gs) {
     this.mensaje = "Memory Game";
     this.cartas = new Array(16);
     this.cartalevantada = null; // carta que acabamos de levantar en caso de no haber ninguna levantada o la que ya estaba levantada al levantar la actual
-    this.numCartas = 0;;
-    this.numparejas = 0;
+    this.numCartas = 0; // Número de cartas levantadas en el momnto actual
+    this.numparejas = 0; // número de parejas encontradas
 
     //inicializa el juego creando las cartas, las desordena y comieza el bucle del juego
     this.initGame = function(){
@@ -31,6 +31,8 @@ MemoryGame = function(gs) {
         this.loop();
     }
 
+    // mezcla las cartas seleccionando aleatoriamente la posicion destino,
+    // el *16 significa que coge números de 0 al 15 -> (max - min) + min, el max se excluye
     this.mezclarCartas = function(cartas){
         var cartasaux = new Array(16);
         var i = 0;
@@ -54,13 +56,14 @@ MemoryGame = function(gs) {
 
     //llama a draw cada 16ms
     this.loop = function(){
-        setInterval(this.draw.bind(this),16);
+       setInterval(this.draw.bind(this),16);
     }
 
-    // Se le llama cada vez que se pulsa en el tablero, se encarga de dar la vuelta a la carta y si hay dos boca arriba 
-    // comprobar si son la misma, en caso de no serlo hay que girarlas otra vez
+    // Se le llama cada vez que se pulsa en el tablero, se encarga de dar la vuelta a la carta 
+    //y si hay dos boca arriba comprueba si son la misma, en caso de no serlo hay que girarlas otra vez
     this.onClick = function(cardId){
         
+        if (cardId >= 0 && cardId != null && cardId <= 15){
         if (this.numparejas == 8) {
             this.mensaje = "Refresh to continue";
         }
@@ -84,20 +87,23 @@ MemoryGame = function(gs) {
                     else{
                         this.mensaje = "Try Again";
                         this.cartas[cardId].flip();
-
+                        
+                        // hacemos una copia de la primera carta levantada y de la clase 
                         var primeraCarta = this.cartalevantada
                         var that = this;
                         ++this.numCartas;
-
+                        
+                        // programamos que se den la vuelta en 1 segundo
                         setTimeout(function(){
                             that.cartas[primeraCarta].flip();
                             that.cartas[cardId].flip();
-                            that.numCartas=0;},900);
+                            that.numCartas=0;},1000);
                     }
                 }
                 this.cartalevantada = null;
             }
         }
+    }
 
     }
 
@@ -116,29 +122,35 @@ MemoryGameCard = function(sprite) {
     this.estadoarriba = 0;
     this.estadoencontrada = 0;
 
+    // Da la vuelta a la carta
     this.flip = function(){
         if (this.estadoarriba == 1) this.estadoarriba = 0;
         else this.estadoarriba = 1;
     }
 
+        // marca si la carta ha sido encontrada
     this.found = function(){
         this.estadoarriba = 1;
         this.estadoencontrada = 1;
     }
 
+    // compara la carta con otra
     this.compareTo = function(otherCard){
         return this.sprite == otherCard;
     }
 
+    // Dibuja la carta 
     this.draw = function(gs, pos){
         if (this.estadoarriba) gs.draw(this.sprite,pos);
         else gs.draw("back", pos);
     }
 
+    // Devuelve el estado de la carta
     this.getestado = function(){
         return this.estadoarriba;
     }
 
+    // Devuelve el sprite de la carta
     this.getId = function(){
         return this.sprite;
     }
